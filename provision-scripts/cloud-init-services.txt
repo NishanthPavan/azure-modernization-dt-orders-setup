@@ -1,0 +1,9 @@
+#cloud-config
+runcmd:
+  - sudo apt-get update
+  - sudo apt-get install -y git
+  - sudo mkdir -p /home/workshop
+  - git clone https://github.com/dt-alliances-workshops/azure-dt-orders.git /home/workshop/azure-dt-orders
+  - sudo chown workshop:workshop -R /home/workshop
+  - sudo usermod -a -G sudo workshop
+  - sudo /home/workshop/azure-dt-orders/provision-scripts/_setup-host.sh dt-orders-services > /tmp/workshop-setup-host.log
