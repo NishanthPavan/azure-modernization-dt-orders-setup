@@ -39,4 +39,4 @@ The learner would only then need to run any scripts in the `/home/workshop/learn
 
 # Maintainer(s)
 
-[Rob Jahn](https://github.com/robertjahn/bio) -- Email me @ rob.jahn@dynatrace.com with questions or more details.
+[Rob Jahn](https://github.com/robertjahn/robertjahn.github.io/blob/master/index.md) -- Email me @ rob.jahn@dynatrace.com with questions or more details.
