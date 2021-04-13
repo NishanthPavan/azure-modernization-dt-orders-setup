@@ -25,7 +25,7 @@ getMonolithPublicIP() {
 getServicesPublicIP() {
   HOSTNAME_SERVICES="dt-orders-services"
   echo "Retrieving $HOSTNAME_SERVICES Public IP"
-  PUBLIC_IP_DOCKER=$(az vm list \
+  PUBLIC_IP_SERVICES=$(az vm list \
     --resource-group "$AZURE_RESOURCE_GROUP" \
     --subscription "$AZURE_SUBSCRIPTION" \
     --query "[?name=='$HOSTNAME_SERVICES'].publicIps" -d -o tsv)
