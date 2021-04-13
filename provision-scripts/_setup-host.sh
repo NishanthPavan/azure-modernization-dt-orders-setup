@@ -28,7 +28,7 @@ setup_monolith() {
     . $APP_SCRIPTS_FULL_PATH/start-monolith.sh
 }
 
-start_services() {
+setup_services() {
     echo "----------------------------------------------------"
     echo "Setup Tools"
     echo "----------------------------------------------------"
@@ -49,17 +49,17 @@ start_services() {
 
 
 case "$HOST_TYPE" in
-    "monolith") 
+    "dt-orders-monolith") 
         echo "===================================================="
         echo "Setting up: $HOST_TYPE" 
         echo "===================================================="
-        start_monolith
+        setup_monolith
         ;;
-    "services") 
+    "dt-orders-services") 
         echo "===================================================="
         echo "Setting up: $HOST_TYPE" 
         echo "===================================================="
-        start_services
+        setup_services
         ;;
     *) 
         echo "Invalid HOST_TYPE: $HOST_TYPE"
