@@ -268,23 +268,22 @@ createhost() {
   HOST_TYPE=$1  
 
   echo "==================================================================================="
-  echo "*** Provisioning $NUM_HOSTS hosts of type $HOST_TYPE ***"
   create_resource_group
   case $HOST_TYPE in
   monolith)
-    echo "Provisioning $HOST_TYPE ($HOST_CTR of $NUM_HOSTS): Starting: $(date)"
+    echo "Provisioning $HOST_TYPE : Starting: $(date)"
     provision_monolith_vm $HOST_CTR
     ;;
   services)
-    echo "Provisioning $HOST_TYPE ($HOST_CTR of $NUM_HOSTS): Starting: $(date)"
+    echo "Provisioning $HOST_TYPE : Starting: $(date)"
     provision_services_vm $HOST_CTR
     ;;
   active-gate)
-    echo "Provisioning $HOST_TYPE ($HOST_CTR of $NUM_HOSTS): Starting: $(date)"
+    echo "Provisioning $HOST_TYPE : Starting: $(date)"
     provision_linux_active_gate $HOST_CTR
     ;;
   *) 
-    echo "Invalid HOST_TYPE option."
+    echo "Invalid HOST_TYPE option: $HOST_TYPE"
     break
     ;;
   esac
