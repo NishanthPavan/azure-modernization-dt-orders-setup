@@ -37,6 +37,16 @@ On this Bastion VM, the workshop repo would already be cloned and the credential
 
 The learner would only then need to run any scripts in the `/home/workshop/learner-scripts/` folder.
 
-# Maintainer(s)
+# Feedback
 
-[Rob Jahn](https://github.com/robertjahn/robertjahn.github.io/blob/master/index.md) -- Email me @ rob.jahn@dynatrace.com with questions or more details.
+Whether it's a bug report, new feature, correction, or additional documentation, we greatly value feedback and contributions.
+
+You can share your feedback by opening a new issue [here](https://github.com/dt-alliances-workshops/azure-modernization-dt-orders-setup/issues).
+
+Please ensure we have all the necessary information to effectively respond to your bug report or contribution such as:
+* The URL to the page, file or script with an issue
+* A reproducible test case or series of steps
+
+# Maintainer
+
+[Rob Jahn](https://www.linkedin.com/in/robjahn/) -- Email me @ rob.jahn@dynatrace.com with questions or more details.
