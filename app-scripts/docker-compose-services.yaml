@@ -62,10 +62,7 @@ services:
       - THINK_TIME=250
       - TEST_SCRIPT=load.jmx
       - TEST_DEBUG=false
-    deploy:
-      restart_policy:
-        condition: any
-        delay: 10s
+    restart: always
   order-browser:
     hostname: browser
     image: dtdemos/dt-orders-browser:1
