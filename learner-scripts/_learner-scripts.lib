@@ -54,7 +54,7 @@ setServicesVersion() {
   # this was built to support the service version of the app
   SERVICE=$1
   NEW_VERSION=$2
-  if [ "$SERVICE" = "catalog" ]; then
+  if [ "$SERVICE" = "order" ]; then
     TAG_SERVICE=catalog-service
   elif [ "$SERVICE" = "customer" ]; then
     TAG_SERVICE=customer-service
