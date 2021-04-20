@@ -51,11 +51,11 @@ showAppUrls() {
 }
 
 setServicesVersion() {
-  # this was built to support the service version of the app
+  # this is hardcoded for the "service" version of the app
   SERVICE=$1
   NEW_VERSION=$2
   if [ "$SERVICE" = "order" ]; then
-    TAG_SERVICE=catalog-service
+    TAG_SERVICE=order-service
   elif [ "$SERVICE" = "customer" ]; then
     TAG_SERVICE=customer-service
   else
@@ -90,7 +90,7 @@ setServicesVersion() {
 
 pushDeploymentEvent() {
   # reference: https://www.dynatrace.com/support/help/dynatrace-api/environment-api/events/post-event/
-  # example arguments: dt-orders dev catalog-service
+  # example arguments: dt-orders dev order-service
   DEPLOYMENT_PROJECT=$1
   TAG_STAGE=$2
   TAG_SERVICE=$3
@@ -125,7 +125,7 @@ pushDeploymentEvent() {
           "attachRules" : {
                 "tagRule" : [
                     {
-                      "meTypes":["PROCESS_GROUP_INSTANCE","SERVICE"],
+                      "meTypes":["PROCESS_GROUP_INSTANCE"],
                       "tags": [
                           {
                                 "context": "CONTEXTLESS",
