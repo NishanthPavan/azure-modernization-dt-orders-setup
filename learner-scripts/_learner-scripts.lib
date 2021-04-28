@@ -110,43 +110,44 @@ pushDeploymentEvent() {
   echo "CI_BACK_LINK               = $CI_BACK_LINK"
   echo "================================================================="
   POST_DATA=$(cat <<EOF
-      {
-          "eventType" : "CUSTOM_DEPLOYMENT",
-          "source" : "Custom Unix Shell Script" ,
-          "deploymentName" : "$DEPLOYMENT_NAME",
-          "deploymentVersion" : "$DEPLOYMENT_VERSION"  ,
-          "deploymentProject" : "$DEPLOYMENT_PROJECT" ,
-          "ciBackLink" : "$CI_BACK_LINK",
-          "customProperties": {
-              "Example Custom Property 1" : "Example Custom Value 1",
-              "Example Custom Property 2" : "Example Custom Value 2",
-              "Example Custom Property 3" : "Example Custom Value 3"
-          },
-          "attachRules" : {
-                "tagRule" : [
-                    {
-                      "meTypes":["PROCESS_GROUP_INSTANCE"],
-                      "tags": [
+  {
+      "eventType" : "CUSTOM_DEPLOYMENT",
+      "source" : "Custom Unix Shell Script" ,
+      "deploymentName" : "$DEPLOYMENT_NAME",
+      "deploymentVersion" : "$DEPLOYMENT_VERSION"  ,
+      "deploymentProject" : "$DEPLOYMENT_PROJECT" ,
+      "ciBackLink" : "$CI_BACK_LINK",
+      "customProperties": {
+          "Example Custom Property 1" : "Example Custom Value 1",
+          "Example Custom Property 2" : "Example Custom Value 2",
+          "Example Custom Property 3" : "Example Custom Value 3"
+      },
+      "attachRules" : {
+            "tagRule" : [
+                {
+                  "meTypes":["PROCESS_GROUP_INSTANCE"],
+                  "tags": [
+                      {
+                            "context": "CONTEXTLESS",
+                            "key": "service",
+                              "value": "$TAG_SERVICE"
+                      },
                           {
-                                "context": "CONTEXTLESS",
-                                "key": "service",
-                                  "value": "$TAG_SERVICE"
-                          },
-                              {
-                                "context": "CONTEXTLESS",
-                                "key": "project",
-                                  "value": "$TAG_PROJECT"
-                          },
-                              {
-                                "context": "CONTEXTLESS",
-                                "key": "stage",
-                                  "value": "$TAG_STAGE"
-                          }
-                ]}
-              ]}
-            }
-      }
-  EOF)
+                            "context": "CONTEXTLESS",
+                            "key": "project",
+                              "value": "$TAG_PROJECT"
+                      },
+                          {
+                            "context": "CONTEXTLESS",
+                            "key": "stage",
+                              "value": "$TAG_STAGE"
+                      }
+            ]}
+          ]}
+        }
+  }
+EOF
+)
   echo "Push Event POST_DATA"
   echo $POST_DATA
   echo ""
