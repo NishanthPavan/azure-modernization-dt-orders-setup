@@ -86,7 +86,7 @@ setServicesVersion() {
     echo "PUBLIC URL  = http://$PUBLIC_IP"
     echo "================================================================="
     RETURN_MESSAGE=$(curl -s -X GET "http://$PUBLIC_IP/$SERVICE/setversion/$NEW_VERSION")
-    if [[ "$RETURN_MESSAGE" == *"Action was successful"* ]]; then
+    if [[ "$RETURN_MESSAGE" == *"Action was successful"* || "$RETURN_MESSAGE" == *"Set version to"* ]]; then
       echo "Set $SERVICE to $NEW_VERSION was successful"
     else
       echo "ERROR setServicesVersion(): Issue setting version"
