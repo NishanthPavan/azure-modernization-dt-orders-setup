@@ -74,23 +74,25 @@ setServicesVersion() {
   if [[ "$NEW_VERSION" = "1" || "$NEW_VERSION" = "2" || "$NEW_VERSION" = "3" ]]; then
     if [ "$TAG_STAGE" = "production" ]; then
       getMonolithPublicIP
+      PUBLIC_IP=$PUBLIC_IP_MONOLITH
     else
       getServicesPublicIP
+      PUBLIC_IP=$PUBLIC_IP_SERVICES
     fi
     echo "================================================================="
-    echo "Setting App Version"
+    echo "Setting Service Version"
     echo "SERVICE     = $SERVICE"
     echo "NEW_VERSION = $NEW_VERSION"
-    echo "PUBLIC URL  = http://$PUBLIC_IP_SERVICES"
+    echo "PUBLIC URL  = http://$PUBLIC_IP"
     echo "================================================================="
-    RETURN_MESSAGE=$(curl -s -X GET "http://$PUBLIC_IP_SERVICES/$SERVICE/setversion/$NEW_VERSION")
+    RETURN_MESSAGE=$(curl -s -X GET "http://$PUBLIC_IP/$SERVICE/setversion/$NEW_VERSION")
     if [[ "$RETURN_MESSAGE" == *"Action was successful"* ]]; then
       echo "Set $SERVICE to $NEW_VERSION was successful"
     else
       echo "ERROR setServicesVersion(): Issue setting version"
       exit 1
     fi
-    pushDeploymentEvent $TAG_PROJECT $TAG_STAGE $TAG_SERVICE $NEW_VERSION "http://$PUBLIC_IP_SERVICES"
+    pushDeploymentEvent $TAG_PROJECT $TAG_STAGE $TAG_SERVICE $NEW_VERSION "http://$PUBLIC_IP"
    else
       echo "ERROR setServicesVersion(): missing or invalid NEW_VERSION $NEW_VERSION : must be value of 1,2 or 3"
       echo "Required arguments are: SERVICE NEW_VERSION"
