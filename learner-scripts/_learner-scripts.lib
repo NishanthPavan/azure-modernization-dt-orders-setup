@@ -51,19 +51,27 @@ showAppUrls() {
 }
 
 setServicesVersion() {
-  # this is hardcoded for the "service" version of the app
   SERVICE=$1
   NEW_VERSION=$2
+
+  TAG_PROJECT=dt-orders
+
   if [ "$SERVICE" = "order" ]; then
     TAG_SERVICE=order-service
+    TAG_STAGE=dev
   elif [ "$SERVICE" = "customer" ]; then
     TAG_SERVICE=customer-service
+    TAG_STAGE=dev
+  elif [ "$SERVICE" = "backend" ]; then
+    TAG_SERVICE=backend
+    TAG_STAGE=production
   else
-    echo "ERROR setServicesVersion(): Invalid or missing SERVICE $SERVICE"
+    echo "ERROR setServicesVersion(): missing or invalid SERVICE $SERVICE : must be value of order,customer or backend"
+    echo "Required arguments are: SERVICE NEW_VERSION"
     exit 1
   fi
 
-  if [[ "$NEW_VERSION" = "1" || "$NEW_VERSION" = "2" ]]; then
+  if [[ "$NEW_VERSION" = "1" || "$NEW_VERSION" = "2" || "$NEW_VERSION" = "3" ]]; then
     getServicesPublicIP
     echo "================================================================="
     echo "Setting App Version"
@@ -78,12 +86,10 @@ setServicesVersion() {
       echo "ERROR setServicesVersion(): Issue setting version"
       exit 1
     fi
-
-    TAG_PROJECT=dt-orders
-    TAG_STAGE=dev
     pushDeploymentEvent $TAG_PROJECT $TAG_STAGE $TAG_SERVICE $NEW_VERSION "http://$PUBLIC_IP_SERVICES"
    else
-      echo "ERROR setServicesVersion(): Invalid or missing NEW_VERSION $NEW_VERSION : must be value of 1 or 2"
+      echo "ERROR setServicesVersion(): missing or invalid NEW_VERSION $NEW_VERSION : must be value of 1,2 or 3"
+      echo "Required arguments are: SERVICE NEW_VERSION"
       exit 1
   fi
 }
