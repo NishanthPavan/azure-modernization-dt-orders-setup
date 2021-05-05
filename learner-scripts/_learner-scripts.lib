@@ -72,7 +72,11 @@ setServicesVersion() {
   fi
 
   if [[ "$NEW_VERSION" = "1" || "$NEW_VERSION" = "2" || "$NEW_VERSION" = "3" ]]; then
-    getServicesPublicIP
+    if [ "$TAG_STAGE" = "production" ]; then
+      getMonolithPublicIP
+    else
+      getServicesPublicIP
+    fi
     echo "================================================================="
     echo "Setting App Version"
     echo "SERVICE     = $SERVICE"
