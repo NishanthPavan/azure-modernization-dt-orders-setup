@@ -3,19 +3,20 @@
 YLW='\033[1;33m'
 NC='\033[0m'
 
-CREDS_FILE=./gen/workshop-credentials.json
-CREDS_TEMPLATE_FILE=./workshop-credentials.template
+CREDS_TEMPLATE_FILE="./workshop-credentials.template"
+CREDS_FILE_GEN="./gen/workshop-credentials.json"
+CREDS_FILE="/tmp/workshop-credentials.json"
 
-if [ -f "$CREDS_FILE" ]
+if [ -f "$CREDS_FILE_GEN" ]
 then
-    DT_BASEURL=$(cat $CREDS_FILE | jq -r '.DT_BASEURL')
-    DT_API_TOKEN=$(cat $CREDS_FILE | jq -r '.DT_API_TOKEN')
-    DT_PAAS_TOKEN=$(cat $CREDS_FILE | jq -r '.DT_PAAS_TOKEN')
-    DT_ENVIRONMENT_ID=$(cat $CREDS_FILE | jq -r '.DT_ENVIRONMENT_ID')
-    AZURE_RESOURCE_GROUP=$(cat $CREDS_FILE | jq -r '.AZURE_RESOURCE_GROUP')
-    AZURE_SUBSCRIPTION=$(cat $CREDS_FILE | jq -r '.AZURE_SUBSCRIPTION')
-    AZURE_LOCATION=$(cat $CREDS_FILE | jq -r '.AZURE_LOCATION')
-    RESOURCE_PREFIX=$(cat $CREDS_FILE | jq -r '.RESOURCE_PREFIX')
+    DT_BASEURL=$(cat $CREDS_FILE_GEN | jq -r '.DT_BASEURL')
+    DT_API_TOKEN=$(cat $CREDS_FILE_GEN | jq -r '.DT_API_TOKEN')
+    DT_PAAS_TOKEN=$(cat $CREDS_FILE_GEN | jq -r '.DT_PAAS_TOKEN')
+    DT_ENVIRONMENT_ID=$(cat $CREDS_FILE_GEN | jq -r '.DT_ENVIRONMENT_ID')
+    AZURE_RESOURCE_GROUP=$(cat $CREDS_FILE_GEN | jq -r '.AZURE_RESOURCE_GROUP')
+    AZURE_SUBSCRIPTION=$(cat $CREDS_FILE_GEN | jq -r '.AZURE_SUBSCRIPTION')
+    AZURE_LOCATION=$(cat $CREDS_FILE_GEN | jq -r '.AZURE_LOCATION')
+    RESOURCE_PREFIX=$(cat $CREDS_FILE_GEN | jq -r '.RESOURCE_PREFIX')
 fi
 
 clear
@@ -85,8 +86,8 @@ if [[ $REPLY =~ ^[Yy]$ ]]
 then
 
   # make a backup
-  cp $CREDS_FILE $CREDS_FILE.bak 2> /dev/null
-  rm $CREDS_FILE 2> /dev/null
+  cp $CREDS_FILE_GEN $CREDS_FILE_GEN.bak 2> /dev/null
+  rm $CREDS_FILE_GEN 2> /dev/null
 
   cat $CREDS_TEMPLATE_FILE | \
     sed 's~RESOURCE_PREFIX_PLACEHOLDER~'"$RESOURCE_PREFIX"'~' | \
@@ -96,14 +97,8 @@ then
     sed 's~DT_ENVIRONMENT_ID_PLACEHOLDER~'"$DT_ENVIRONMENT_ID"'~' | \
     sed 's~DT_BASEURL_PLACEHOLDER~'"$DT_BASEURL"'~' | \
     sed 's~DT_API_TOKEN_PLACEHOLDER~'"$DT_API_TOKEN"'~' | \
-    sed 's~DT_PAAS_TOKEN_PLACEHOLDER~'"$DT_PAAS_TOKEN"'~' > $CREDS_FILE
+    sed 's~DT_PAAS_TOKEN_PLACEHOLDER~'"$DT_PAAS_TOKEN"'~' > $CREDS_FILE_GEN
 
-  # copy to location that other script expect it
-  CREDS_FILE_COPY="/tmp/workshop-credentials.json"
-  cp -f $CREDS_FILE $CREDS_FILE_COPY
-  echo ""
-  echo "Saved credential values to: $CREDS_FILE_COPY"
-  echo ""
-  echo "==================================================================="
-  cat $CREDS_FILE
+  echo "Saved credential to: $CREDS_FILE_GEN"
+  cat $CREDS_FILE_GEN
 fi

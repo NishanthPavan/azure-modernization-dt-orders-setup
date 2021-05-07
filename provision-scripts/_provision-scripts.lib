@@ -1,7 +1,9 @@
 #!/bin/bash
 
-CREDS_FILE=/tmp/workshop-credentials.json
+CREDS_FILE_GEN="./gen/workshop-credentials.json"
+CREDS_FILE="/tmp/workshop-credentials.json"
 
+copy_creds_file
 if [ -f "$CREDS_FILE" ]
 then
     DT_BASEURL=$(cat $CREDS_FILE | jq -r '.DT_BASEURL')
@@ -16,6 +18,14 @@ else
   echo "ABORT: CREDS_FILE: $CREDS_FILE not found"
   exit 1
 fi
+
+#*********************************
+# this ensures file is in /tmp where other scripts expect it
+copy_creds_file()
+{
+  echo "Copy credentials to: $CREDS_FILE"
+  cp -f $CREDS_FILE_GEN $CREDS_FILE
+}
 
 #*********************************
 create_azure_service_principal()
