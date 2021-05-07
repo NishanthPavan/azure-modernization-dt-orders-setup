@@ -78,27 +78,24 @@ echo "--------------------------------------------------"
 echo "Azure Resource Group     : $AZURE_RESOURCE_GROUP"
 echo "Dynatrace Environment ID : $DT_ENVIRONMENT_ID"
 echo "==================================================================="
-read -p "Is this all correct? (y/n) : " -n 1 -r
+read -p "Is this all correct? (y/n) : " REPLY;
+if [ "$REPLY" != "y" ]; then exit 0; fi
 echo ""
 echo "==================================================================="
+# make a backup
+cp $CREDS_FILE_GEN $CREDS_FILE_GEN.bak 2> /dev/null
+rm $CREDS_FILE_GEN 2> /dev/null
 
-if [[ $REPLY =~ ^[Yy]$ ]]
-then
+# create new file from the template
+cat $CREDS_TEMPLATE_FILE | \
+  sed 's~RESOURCE_PREFIX_PLACEHOLDER~'"$RESOURCE_PREFIX"'~' | \
+  sed 's~AZURE_RESOURCE_GROUP_PLACEHOLDER~'"$AZURE_RESOURCE_GROUP"'~' | \
+  sed 's~AZURE_SUBSCRIPTION_PLACEHOLDER~'"$AZURE_SUBSCRIPTION"'~' | \
+  sed 's~AZURE_LOCATION_PLACEHOLDER~'"$AZURE_LOCATION"'~' | \
+  sed 's~DT_ENVIRONMENT_ID_PLACEHOLDER~'"$DT_ENVIRONMENT_ID"'~' | \
+  sed 's~DT_BASEURL_PLACEHOLDER~'"$DT_BASEURL"'~' | \
+  sed 's~DT_API_TOKEN_PLACEHOLDER~'"$DT_API_TOKEN"'~' | \
+  sed 's~DT_PAAS_TOKEN_PLACEHOLDER~'"$DT_PAAS_TOKEN"'~' > $CREDS_FILE_GEN
 
-  # make a backup
-  cp $CREDS_FILE_GEN $CREDS_FILE_GEN.bak 2> /dev/null
-  rm $CREDS_FILE_GEN 2> /dev/null
-
-  cat $CREDS_TEMPLATE_FILE | \
-    sed 's~RESOURCE_PREFIX_PLACEHOLDER~'"$RESOURCE_PREFIX"'~' | \
-    sed 's~AZURE_RESOURCE_GROUP_PLACEHOLDER~'"$AZURE_RESOURCE_GROUP"'~' | \
-    sed 's~AZURE_SUBSCRIPTION_PLACEHOLDER~'"$AZURE_SUBSCRIPTION"'~' | \
-    sed 's~AZURE_LOCATION_PLACEHOLDER~'"$AZURE_LOCATION"'~' | \
-    sed 's~DT_ENVIRONMENT_ID_PLACEHOLDER~'"$DT_ENVIRONMENT_ID"'~' | \
-    sed 's~DT_BASEURL_PLACEHOLDER~'"$DT_BASEURL"'~' | \
-    sed 's~DT_API_TOKEN_PLACEHOLDER~'"$DT_API_TOKEN"'~' | \
-    sed 's~DT_PAAS_TOKEN_PLACEHOLDER~'"$DT_PAAS_TOKEN"'~' > $CREDS_FILE_GEN
-
-  echo "Saved credential to: $CREDS_FILE_GEN"
-  cat $CREDS_FILE_GEN
-fi
+echo "Saved credential to: $CREDS_FILE_GEN"
+cat $CREDS_FILE_GEN

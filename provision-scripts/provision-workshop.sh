@@ -23,6 +23,11 @@ setup_workshop_config()
     cd ../provision-scripts
 }
 
+echo "==================================================================="
+echo "About to Provision Workshop"
+echo "==================================================================="
+read -p "Proceed? (y/n) : " REPLY;
+if [ "$REPLY" != "y" ]; then exit 0; fi
 echo ""
 echo "=========================================="
 echo "Provisioning workshop resources"

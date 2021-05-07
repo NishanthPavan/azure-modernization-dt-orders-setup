@@ -25,8 +25,7 @@ if [ -z $1 ]; then
     echo "==================================================================="
     echo "About to Delete Workshop configuration on $DT_BASEURL"
     echo "==================================================================="
-    read -p "Proceed with cleanup? (y/n) : " -n 1 -r
-    echo ""
+    read -p "Proceed? (y/n) : " REPLY;
 else
     REPLY=$1
 fi

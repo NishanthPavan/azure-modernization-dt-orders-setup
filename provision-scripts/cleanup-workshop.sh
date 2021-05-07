@@ -16,24 +16,22 @@ cleanup_workshop_config()
 echo "==================================================================="
 echo "About to Delete Workshop resources"
 echo "==================================================================="
-read -p "Proceed with cleanup? (y/n) : " -n 1 -r
+read -p "Proceed? (y/n) : " CONDITION;
+if [ "$CONDITION" != "y" ]; then exit 0; fi
+
 echo ""
+echo "=========================================="
+echo "Deleting workshop resources"
+echo "Starting: $(date)"
+echo "=========================================="
 
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-  echo ""
-  echo "=========================================="
-  echo "Deleting workshop resources"
-  echo "Starting: $(date)"
-  echo "=========================================="
+delete_resource_group
+delete_azure_service_principal
+cleanup_workshop_config
 
-  delete_resource_group
-  delete_azure_service_principal
-  cleanup_workshop_config
-
-  echo ""
-  echo "============================================="
-  echo "Deleting workshop resources COMPLETE"
-  echo "End: $(date)"
-  echo "============================================="
-  echo ""
-fi
+echo ""
+echo "============================================="
+echo "Deleting workshop resources COMPLETE"
+echo "End: $(date)"
+echo "============================================="
+echo ""
