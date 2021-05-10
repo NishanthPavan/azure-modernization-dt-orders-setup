@@ -98,4 +98,7 @@ cat $CREDS_TEMPLATE_FILE | \
   sed 's~DT_PAAS_TOKEN_PLACEHOLDER~'"$DT_PAAS_TOKEN"'~' > $CREDS_FILE_GEN
 
 echo "Saved credential to: $CREDS_FILE_GEN"
+echo "Coping $CREDS_FILE_GEN to $CREDS_FILE"
+cp -f $CREDS_FILE_GEN $CREDS_FILE
+
 cat $CREDS_FILE_GEN
