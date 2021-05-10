@@ -7,7 +7,7 @@ CREDS_FILE="/tmp/workshop-credentials.json"
 # this ensures file is in /tmp where other scripts expect it
 copy_creds_file()
 {
-  echo "Copy credentials to: $CREDS_FILE"
+  echo "Coping $CREDS_FILE_GEN to $CREDS_FILE"
   cp -f $CREDS_FILE_GEN $CREDS_FILE
 }
 
