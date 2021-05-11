@@ -7,7 +7,7 @@ then
     exit 1
 fi
 
-APP_SCRIPTS_FULL_PATH=/home/workshop/azure-dt-orders/app-scripts
+APP_SCRIPTS_FULL_PATH=/home/workshop/azure-modernization-dt-orders-setup/app-scripts
 
 setup_monolith() {
     echo "----------------------------------------------------"
@@ -21,7 +21,12 @@ setup_monolith() {
     apt-get install -y docker-ce docker-ce-cli containerd.io
     apt-get install -y jq
     apt install -y docker-compose
-  
+
+    echo "----------------------------------------------------"
+    echo "Install OneAgent"
+    echo "----------------------------------------------------"
+    /bin/sh /tmp/Dynatrace-OneAgent-Linux.sh --set-app-log-content-access=true --set-infra-only=false --set-host-group=dt-orders-monolith
+
     echo "----------------------------------------------------"
     echo "Start Monolith App"
     echo "----------------------------------------------------"
