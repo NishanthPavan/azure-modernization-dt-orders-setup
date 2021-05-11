@@ -1,18 +1,8 @@
 #!/bin/bash
 
-CREDS_FILE_GEN="./gen/workshop-credentials.json"
-CREDS_FILE="/tmp/workshop-credentials.json"
+CREDS_FILE="../gen/workshop-credentials.json"
 
 #*********************************
-# this ensures file is in /tmp where other scripts expect it
-copy_creds_file()
-{
-  echo "Coping $CREDS_FILE_GEN to $CREDS_FILE"
-  cp -f $CREDS_FILE_GEN $CREDS_FILE
-}
-
-#*********************************
-copy_creds_file
 if [ -f "$CREDS_FILE" ]
 then
     DT_BASEURL=$(cat $CREDS_FILE | jq -r '.DT_BASEURL')
@@ -32,7 +22,7 @@ fi
 create_azure_service_principal()
 {
   AZURE_SP_NAME="$AZURE_RESOURCE_GROUP-sp" 
-  AZURE_SP_JSON_FILE="./gen/workshop-azure-service-principal.json"
+  AZURE_SP_JSON_FILE="../gen/workshop-azure-service-principal.json"
 
   # delete sp if it exists
   echo "Seeing if $AZURE_SP_NAME exists in Azure"
@@ -51,11 +41,6 @@ create_azure_service_principal()
       --scopes "/subscriptions/$AZURE_SUBSCRIPTION" \
       > "$AZURE_SP_JSON_FILE"
 
-  # copy file where other scripts expect it
-  AZURE_SP_JSON_FILE_COPY="/tmp/workshop-azure-service-principal.json"
-  echo "Coping file to $AZURE_SP_JSON_FILE_COPY"
-  cp -f $AZURE_SP_JSON_FILE $AZURE_SP_JSON_FILE_COPY
-
   echo "Sleeping 10 seconds to allow for Azure subscription creation"
   sleep 10
 }
@@ -64,7 +49,7 @@ create_azure_service_principal()
 delete_azure_service_principal()
 {
   AZURE_SP_NAME="$AZURE_RESOURCE_GROUP-sp" 
-  AZURE_SP_JSON_FILE="/tmp/workshop-azure-service-principal.json"
+  AZURE_SP_JSON_FILE="../gen/workshop-azure-service-principal.json"
 
   # delete sp if it exists
   echo "Seeing if $AZURE_SP_NAME exists in Azure"
@@ -148,7 +133,7 @@ provision_linux_active_gate()
   HOSTNAME="dt-orders-active-gate"
 
   # make cloud-init with users API and TOKEN info
-  ACTIVATE_GATE_FILE="/tmp/dt-orders-active-gate-cloud-init.txt"
+  ACTIVATE_GATE_FILE="../gen/dt-orders-active-gate-cloud-init.txt"
 
   echo "#cloud-config" > $ACTIVATE_GATE_FILE
   echo "runcmd:" >> $ACTIVATE_GATE_FILE
@@ -192,6 +177,13 @@ provision_linux_active_gate()
 # cloud-init logs: /var/log/cloud-init.log
 provision_monolith_vm()
 {
+  INIT_TEMPLATE_FILE=cloud-init-monolith.template
+  INIT_FILE_GEN=../gen/cloud-init-monolith.txt
+
+  cat $INIT_TEMPLATE_FILE | \
+    sed 's~DT_PAAS_TOKEN_PLACEHOLDER~'"$DT_PAAS_TOKEN"'~' | \
+    sed 's~DT_BASEURL_PLACEHOLDER~'"$DT_BASEURL"'~' > $INIT_FILE_GEN
+
   HOSTNAME="dt-orders-monolith"
   echo "Checking if $HOSTNAME already exists"
   echo "If you see 'ERROR: (ResourceNotFound)', that is OK.  Its just the output from azure CLI"
@@ -210,7 +202,7 @@ provision_monolith_vm()
       --tags Owner=azure-modernize-workshop \
       --subscription "$AZURE_SUBSCRIPTION" \
       --location "$AZURE_LOCATION" \
-      --custom-data cloud-init-monolith.txt \
+      --custom-data "$INIT_FILE_GEN" \
       --authentication-type password \
       --admin-username workshop \
       --admin-password Workshop123# \
@@ -224,7 +216,6 @@ provision_monolith_vm()
     else
       echo "Opening Ports"
       OPEN_PORT="$(az vm open-port --port 80 --priority 1010 --resource-group "$AZURE_RESOURCE_GROUP" --name "$HOSTNAME" --subscription "$AZURE_SUBSCRIPTION")"
-      add_oneagent_extension oneAgentLinux dt-orders-monolith
     fi
   fi
 }
@@ -233,6 +224,13 @@ provision_monolith_vm()
 # cloud-init logs: /var/log/cloud-init.log
 provision_services_vm()
 {
+  INIT_TEMPLATE_FILE=cloud-init-services.template
+  INIT_FILE_GEN=../gen/cloud-init-services.txt
+
+  cat $INIT_TEMPLATE_FILE | \
+    sed 's~DT_PAAS_TOKEN_PLACEHOLDER~'"$DT_PAAS_TOKEN"'~' | \
+    sed 's~DT_BASEURL_PLACEHOLDER~'"$DT_BASEURL"'~' > $INIT_FILE_GEN
+
   HOSTNAME="dt-orders-services"
   echo "Checking if $HOSTNAME already exists"
   echo "If you see 'ERROR: (ResourceNotFound)', that is OK.  Its just the output from azure CLI"
@@ -251,7 +249,7 @@ provision_services_vm()
       --tags Owner=azure-modernize-workshop \
       --subscription "$AZURE_SUBSCRIPTION" \
       --location "$AZURE_LOCATION" \
-      --custom-data cloud-init-services.txt \
+      --custom-data "$INIT_FILE_GEN" \
       --authentication-type password \
       --admin-username workshop \
       --admin-password Workshop123# \
@@ -265,7 +263,6 @@ provision_services_vm()
     else
       echo "Opening Ports"
       OPEN_PORT="$(az vm open-port --port 80 --priority 1010 --resource-group "$AZURE_RESOURCE_GROUP" --name "$HOSTNAME" --subscription "$AZURE_SUBSCRIPTION")"
-      add_oneagent_extension oneAgentLinux dt-orders-services
     fi
   fi
 }
