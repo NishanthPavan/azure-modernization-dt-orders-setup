@@ -20,8 +20,8 @@ See the README files in the subfolders for additional details.
 In this use case, a learner needs to provide Dynatrace tenant and Azure subscription.  
 
 Within the Azure console, they learner uses the Azure Cloud Shell to would provision the workshop following these steps:
-* `git clone https://github.com/dt-alliances-workshops/azure-dt-orders.git` 
-* `cd azure-dt-orders/provision-scripts/`
+* `git clone https://github.com/dt-alliances-workshops/azure-modernization-dt-orders-setup.git` 
+* `cd azure-modernization-dt-orders-setup/provision-scripts/`
 * `./input-credentials.sh`
 * `./provision-workshop.sh`
 * `cd ../learner-scripts`
@@ -33,7 +33,7 @@ In this use case, Dynatrace tenant and all the Azure resources would be pre-prov
 
 The learner would use a provided Bastion host VM that has a web-based cloud SSH shell. The learned would not log into the Azure web console.
 
-On this Bastion VM, the workshop repo would already be cloned and the credentials file `/tmp/workshop-credentials.json` would already exist and be populated with the information needed for their use. 
+On this Bastion VM, the workshop repo would already be cloned and the credentials file `/home/workshop/gen/workshop-credentials.json` would already exist and be populated with the information needed for their use. 
 
 The learner would only then need to run any scripts in the `/home/workshop/learner-scripts/` folder.
 
