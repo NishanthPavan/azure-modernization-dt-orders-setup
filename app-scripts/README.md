@@ -4,7 +4,7 @@ These scripts stop and start the dt-orders application in both monolith and serv
 
 # Prereqs
 
-1. This repo was git cloned to `/home/workshop/azure-dt-orders`
+1. This repo was git cloned to `/home/workshop/azure-modernization-dt-orders-setup`
 1. The VM running Docker and has Docker-Compose installed
 
 # Usage
