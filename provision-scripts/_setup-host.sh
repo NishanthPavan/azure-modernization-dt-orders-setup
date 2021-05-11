@@ -47,6 +47,11 @@ setup_services() {
     apt install -y docker-compose
   
     echo "----------------------------------------------------"
+    echo "Install OneAgent"
+    echo "----------------------------------------------------"
+    /bin/sh /tmp/Dynatrace-OneAgent-Linux.sh --set-app-log-content-access=true --set-infra-only=false --set-host-group=dt-orders-monolith
+
+    echo "----------------------------------------------------"
     echo "Start Services App"
     echo "----------------------------------------------------"
     . $APP_SCRIPTS_FULL_PATH/start-services.sh
