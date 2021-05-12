@@ -10,6 +10,7 @@ The repo contains the setup and learner scripts to support [this Azure and Dynat
 1. `app-scripts/` - These scripts are called by the scripts in `provision-scripts/` folder to install workshop sample applications.  A learner generally would not run these directly, but they could if they needed to start or stop the applications.
 1. `workshop-config/` - If not done in advance by the workshop instructor, this folder contains the scripts to setup the Dynatrace configuration for the learners Dynatrace tenant.
 1. `learner-scripts/` - This folder contains the scripts a learner would use in workshop labs.
+1. `gen/` - This folder contains generated files.  The `.gitignore` excludes them from check in.
 
 See the README files in the subfolders for additional details.
 
