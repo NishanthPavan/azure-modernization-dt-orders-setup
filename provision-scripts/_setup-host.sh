@@ -49,7 +49,7 @@ setup_services() {
     echo "----------------------------------------------------"
     echo "Install OneAgent"
     echo "----------------------------------------------------"
-    /bin/sh /tmp/Dynatrace-OneAgent-Linux.sh --set-app-log-content-access=true --set-infra-only=false --set-host-group=dt-orders-monolith
+    /bin/sh /tmp/Dynatrace-OneAgent-Linux.sh --set-app-log-content-access=true --set-infra-only=false --set-host-group=dt-orders-services
 
     echo "----------------------------------------------------"
     echo "Start Services App"
