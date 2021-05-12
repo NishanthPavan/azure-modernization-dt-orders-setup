@@ -9,7 +9,7 @@ MONACO_CONFIG_FOLDER="$MONACO_PROJECT_BASE_PATH/$MONACO_PROJECT"
 
 create_service_principal_monaco_config() {
 
-    AZURE_SP_JSON_FILE="/tmp/workshop-azure-service-principal.json"
+    AZURE_SP_JSON_FILE="../gen/workshop-azure-service-principal.json"
 
     mkdir -p "$MONACO_CONFIG_FOLDER/azure-credentials"
     MONACO_JSON_FILE="$MONACO_CONFIG_FOLDER/azure-credentials/azure-credentials.json"
