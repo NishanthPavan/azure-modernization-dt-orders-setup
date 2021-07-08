@@ -2,12 +2,17 @@
 .DS_Store
 .logs
 todo.txt
+delete.yaml
+NOTUSED
 
 # generated files
 gen/workshop-credentials.json*
 gen/*cloud-init*
 gen/workshop-azure-service-principal.json
-workshop-config/monaco/projects/workshop/azure-credentials/
+learner-scripts/create-dynatrace-secret.sh
+learner-scripts/cr.yaml
+workshop-config/monaco-files/projects/workshop/azure-credentials/
+install.sh
 
 # downloaded files
-workshop-config/monaco-binary
+workshop-config/monaco

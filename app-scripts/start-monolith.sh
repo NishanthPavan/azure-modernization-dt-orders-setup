@@ -11,7 +11,7 @@ printf "\n\n***** Stopping Monolith ***\n" >> $LOGFILE 2>&1
 sudo $APP_SCRIPTS_PATH/stop-monolith.sh
 
 printf "\n\n***** Starting Monolith ***\n" >> $LOGFILE 2>&1
-sudo docker-compose -f "$APP_SCRIPTS_PATH/docker-compose-monolith.yaml" up -d
+sudo docker-compose -f "$APP_SCRIPTS_PATH/docker-compose-monolith.yml" up -d
 
 END_TIME="$(date)"
 printf "\n\n" >> $LOGFILE 2>&1

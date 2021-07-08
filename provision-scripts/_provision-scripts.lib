@@ -18,6 +18,76 @@ else
   exit 1
 fi
 
+AZURE_AKS_CLUSTER_NAME="$RESOURCE_PREFIX-azure-modernize-cluster"
+
+#*********************************
+create_dynatrace_operator_secrets_script()
+{
+  # reference: https://www.dynatrace.com/support/help/technology-support/container-platforms/kubernetes/monitor-kubernetes-environments/
+
+  SECRETS_TEMPLATE_FILE=dynatrace-secret.template
+  SECRETS_GEN_FILE="../learner-scripts/create-dynatrace-secret.sh"
+
+  # create new file from the template with learner Dynatrace tenant information
+  echo "#!/bin/bash" > $SECRETS_GEN_FILE
+  cat $SECRETS_TEMPLATE_FILE | \
+    sed 's~DT_API_TOKEN_PLACEHOLDER~'"$DT_API_TOKEN"'~' | \
+    sed 's~DT_PAAS_TOKEN_PLACEHOLDER~'"$DT_PAAS_TOKEN"'~' >> $SECRETS_GEN_FILE
+
+  chmod +x $SECRETS_GEN_FILE
+  echo "Saved dynatrace operator secrets script to: $SECRETS_GEN_FILE"
+}
+
+#*********************************
+create_dynatrace_operator_custom_resource_file()
+{
+  # download custom resource file
+  CR_TEMP_FILE="../learner-scripts/cr.tmp"
+  CR_GEN_FILE="../learner-scripts/cr.yaml"
+  curl -Lo $CR_TEMP_FILE https://github.com/Dynatrace/dynatrace-operator/releases/latest/download/cr.yaml
+
+  # update with learner Dynatrace tenant information
+  cat $CR_TEMP_FILE | \
+    sed 's~https://ENVIRONMENTID.live.dynatrace.com~'"$DT_BASEURL"'~' > $CR_GEN_FILE
+
+  rm $CR_TEMP_FILE
+  echo "Saved custom resource file to: $CR_GEN_FILE"
+}
+
+#*********************************
+create_aks_cluster()
+{
+  create_resource_group
+  # only create if it does not exist
+  if [ -z $(az aks show -n $AZURE_AKS_CLUSTER_NAME --resource-group $AZURE_RESOURCE_GROUP --query id) ]; then
+    echo "Creating AKS Cluster: $AZURE_AKS_CLUSTER_NAME"
+    az aks create \
+      --resource-group $AZURE_RESOURCE_GROUP \
+      --name $AZURE_AKS_CLUSTER_NAME \
+      --node-count 2 \
+      --enable-addons monitoring \
+      --generate-ssh-keys
+  else
+    echo "ABORT: AKS Cluster $AZURE_AKS_CLUSTER_NAME already exists"
+    exit 1
+  fi
+}
+
+#*********************************
+delete_aks_cluster()
+{
+  # only create if it does not exist
+  if [ $(az group show -n $AZURE_RESOURCE_GROUP --resource-group $AZURE_RESOURCE_GROUP --query id) ]; then
+    echo "Deleting AKS Cluster: $AZURE_RESOURCE_GROUP"
+    az aks delete \
+      --resource-group $AZURE_RESOURCE_GROUP \
+      --name $AZURE_AKS_CLUSTER_NAME \
+      --yes
+  else
+    echo "AKS Cluster $AZURE_RESOURCE_GROUP not found"
+  fi
+}
+
 #*********************************
 create_azure_service_principal()
 {
@@ -133,7 +203,7 @@ provision_linux_active_gate()
   HOSTNAME="dt-orders-active-gate"
 
   # make cloud-init with users API and TOKEN info
-  ACTIVATE_GATE_FILE="../gen/dt-orders-active-gate-cloud-init.txt"
+  ACTIVATE_GATE_FILE="../gen/cloud-init-activegate.txt"
 
   echo "#cloud-config" > $ACTIVATE_GATE_FILE
   echo "runcmd:" >> $ACTIVATE_GATE_FILE

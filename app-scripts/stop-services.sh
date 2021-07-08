@@ -8,6 +8,6 @@ fi
 APP_SCRIPTS_PATH=/home/workshop/azure-modernization-dt-orders-setup/app-scripts
 
 echo "*** Stopping Services ***"
-sudo docker-compose -f "$APP_SCRIPTS_PATH/docker-compose-services.yaml" down
+sudo docker-compose -f "$APP_SCRIPTS_PATH/docker-compose-services.yml" down
 
 echo "*** Stopping Services Done. ***"

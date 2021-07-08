@@ -8,6 +8,6 @@ fi
 APP_SCRIPTS_PATH=/home/workshop/azure-modernization-dt-orders-setup/app-scripts
 
 echo "*** Stopping Monolith ***"
-sudo docker-compose -f "$APP_SCRIPTS_PATH/docker-compose-monolith.yaml" down
+sudo docker-compose -f "$APP_SCRIPTS_PATH/docker-compose-monolith.yml" down
 
 echo "*** Stopping Monolith Done. ***"

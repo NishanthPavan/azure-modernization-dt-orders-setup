@@ -11,7 +11,7 @@ printf "\n\n***** Stopping Services ***\n" >> $LOGFILE 2>&1
 sudo $APP_SCRIPTS_PATH/stop-services.sh
 
 printf "\n\n***** Starting Services ***\n" >> $LOGFILE 2>&1
-sudo docker-compose -f "$APP_SCRIPTS_PATH/docker-compose-services.yaml" up -d
+sudo docker-compose -f "$APP_SCRIPTS_PATH/docker-compose-services.yml" up -d
 
 END_TIME="$(date)"
 printf "\n\n" >> $LOGFILE 2>&1

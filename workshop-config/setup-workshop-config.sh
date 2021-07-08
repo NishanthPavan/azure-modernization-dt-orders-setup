@@ -2,14 +2,19 @@
 
 source ./_workshop-config.lib
 
-MONACO_PROJECT_BASE_PATH=./monaco/projects
-MONACO_PROJECT=workshop
-MONACO_ENVIONMENT_FILE=./monaco/environments.yaml
-MONACO_CONFIG_FOLDER="$MONACO_PROJECT_BASE_PATH/$MONACO_PROJECT"
+# optional argument.  If not based, then the base workshop is setup.
+# setup types are for additional features like kubernetes
+SETUP_TYPE=$1
+
+MONACO_PROJECT_BASE_PATH=./monaco-files/projects
+MONACO_ENVIONMENT_FILE=./monaco-files/environments.yaml
 
 create_service_principal_monaco_config() {
 
     AZURE_SP_JSON_FILE="../gen/workshop-azure-service-principal.json"
+
+    MONACO_WORSHOP_PROJECT=workshop
+    MONACO_CONFIG_FOLDER="$MONACO_PROJECT_BASE_PATH/$MONACO_WORSHOP_PROJECT"
 
     mkdir -p "$MONACO_CONFIG_FOLDER/azure-credentials"
     MONACO_JSON_FILE="$MONACO_CONFIG_FOLDER/azure-credentials/azure-credentials.json"
@@ -53,22 +58,33 @@ create_service_principal_monaco_config() {
 download_monaco() {
     if [ $(uname -s) == "Darwin" ]
     then
-        MONACO_BINARY="v1.5.0/monaco-darwin-10.6-amd64"
+        MONACO_BINARY="v1.6.0/monaco-darwin-10.12-amd64"
     else
-        MONACO_BINARY="v1.5.0/monaco-linux-amd64"
+        MONACO_BINARY="v1.6.0/monaco-linux-amd64"
     fi
     echo "Getting MONACO_BINARY = $MONACO_BINARY"
-    rm -f monaco-binary
-    wget -q -O monaco-binary https://github.com/dynatrace-oss/dynatrace-monitoring-as-code/releases/download/$MONACO_BINARY
-    chmod +x monaco-binary
-    echo "Installed monaco version: $(monaco --version)"
+    rm -f monaco
+    wget -q -O monaco https://github.com/dynatrace-oss/dynatrace-monitoring-as-code/releases/download/$MONACO_BINARY
+    chmod +x monaco
+    echo "Installed monaco version: $(./monaco --version | tail -1)"
 }
 
 run_monaco() {
-    # run monaco configuration
-    # add the -dry-run argument to test
-    export NEW_CLI=1
-    export DT_BASEURL=$DT_BASEURL && export DT_API_TOKEN=$DT_API_TOKEN && ./monaco-binary deploy -v --environments $MONACO_ENVIONMENT_FILE --project $MONACO_PROJECT $MONACO_PROJECT_BASE_PATH
+    if [ -z "$1" ]; then
+        MONACO_PROJECT=workshop
+    else
+        MONACO_PROJECT=$1
+    fi
+
+    echo "Running monaco for project = $MONACO_PROJECT"
+    echo "monaco deploy -v --environments $MONACO_ENVIONMENT_FILE --project $MONACO_PROJECT $MONACO_PROJECT_BASE_PATH"
+
+    # add the --dry-run argument during testing
+    export NEW_CLI=1 && export DT_BASEURL=$DT_BASEURL && export DT_API_TOKEN=$DT_API_TOKEN && \
+        ./monaco deploy -v \
+        --environments $MONACO_ENVIONMENT_FILE \
+        --project $MONACO_PROJECT \
+        $MONACO_PROJECT_BASE_PATH
 }
 
 run_custom_dynatrace_config() {
@@ -78,16 +94,34 @@ run_custom_dynatrace_config() {
 
 echo ""
 echo "-----------------------------------------------------------------------------------"
-echo "Setting up Workshop config on $DT_BASEURL"
-echo "Starting: $(date)"
+echo "Setting up Workshop config"
+echo "Dynatrace  : $DT_BASEURL"
+echo "Starting   : $(date)"
 echo "-----------------------------------------------------------------------------------"
 echo ""
 
-download_monaco
-create_service_principal_monaco_config
-run_monaco
-run_custom_dynatrace_config
-
+case "$SETUP_TYPE" in
+    "k8") 
+        echo "Setup type = k8"
+        download_monaco
+        run_monaco k8
+        ;;
+    "synthetics") 
+        echo "Setup type = synthetics"
+        run_monaco synthetics
+        ;;
+    *) 
+        echo "Setup type = base workshop"
+        download_monaco
+        create_service_principal_monaco_config
+        run_monaco
+        # sometimes a hiccup, so repeat
+        sleep 5
+        run_monaco
+        run_custom_dynatrace_config
+        ;;
+esac
+ 
 echo ""
 echo "-----------------------------------------------------------------------------------"
 echo "Done Setting up Workshop config"
