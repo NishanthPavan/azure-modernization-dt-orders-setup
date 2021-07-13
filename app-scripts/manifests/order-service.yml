@@ -30,7 +30,7 @@ spec:
           name: order-service
         env:
         - name: DT_CUSTOM_PROP
-          value: "project=dt-orders service=order"
+          value: "project=dt-orders service=order-service"
 ---
 apiVersion: v1
 kind: Service

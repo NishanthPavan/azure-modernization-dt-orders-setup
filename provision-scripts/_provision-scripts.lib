@@ -13,12 +13,12 @@ then
     AZURE_SUBSCRIPTION=$(cat $CREDS_FILE | jq -r '.AZURE_SUBSCRIPTION')
     AZURE_LOCATION=$(cat $CREDS_FILE | jq -r '.AZURE_LOCATION')
     RESOURCE_PREFIX=$(cat $CREDS_FILE | jq -r '.RESOURCE_PREFIX')
+    AZURE_AKS_CLUSTER_NAME=$(cat $CREDS_FILE | jq -r '.AZURE_AKS_CLUSTER_NAME')
+
 else 
   echo "ABORT: CREDS_FILE: $CREDS_FILE not found"
   exit 1
 fi
-
-AZURE_AKS_CLUSTER_NAME="$RESOURCE_PREFIX-azure-modernize-cluster"
 
 #*********************************
 create_dynatrace_operator_secrets_script()
@@ -60,6 +60,8 @@ create_aks_cluster()
   create_resource_group
   # only create if it does not exist
   if [ -z $(az aks show -n $AZURE_AKS_CLUSTER_NAME --resource-group $AZURE_RESOURCE_GROUP --query id) ]; then
+    echo ""
+    echo "If you see an ERROR, that is ok it was just a check to see if the cluster already exists "
     echo "Creating AKS Cluster: $AZURE_AKS_CLUSTER_NAME"
     az aks create \
       --resource-group $AZURE_RESOURCE_GROUP \

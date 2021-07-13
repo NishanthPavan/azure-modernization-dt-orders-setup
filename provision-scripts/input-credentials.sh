@@ -42,6 +42,7 @@ AZURE_SUBSCRIPTION=${AZURE_SUBSCRIPTION_NEW:-$AZURE_SUBSCRIPTION}
 AZURE_LOCATION=${AZURE_LOCATION_NEW:-$AZURE_LOCATION}
 # append a prefix to resource group
 AZURE_RESOURCE_GROUP="$RESOURCE_PREFIX-azure-modernize-workshop"
+AZURE_AKS_CLUSTER_NAME="$RESOURCE_PREFIX-azure-modernize-cluster"
 
 # pull out the DT_ENVIRONMENT_ID. DT_BASEURL will be one of these patterns
 if [[ $(echo $DT_BASEURL | grep "/e/" | wc -l) == *"1"* ]]; then
@@ -75,6 +76,7 @@ echo "--------------------------------------------------"
 echo "derived values"
 echo "--------------------------------------------------"
 echo "Azure Resource Group     : $AZURE_RESOURCE_GROUP"
+echo "Azure Cluster Name       : $AZURE_AKS_CLUSTER_NAME"
 echo "Dynatrace Environment ID : $DT_ENVIRONMENT_ID"
 echo "==================================================================="
 read -p "Is this all correct? (y/n) : " REPLY;
@@ -89,6 +91,7 @@ rm $CREDS_FILE 2> /dev/null
 cat $CREDS_TEMPLATE_FILE | \
   sed 's~RESOURCE_PREFIX_PLACEHOLDER~'"$RESOURCE_PREFIX"'~' | \
   sed 's~AZURE_RESOURCE_GROUP_PLACEHOLDER~'"$AZURE_RESOURCE_GROUP"'~' | \
+  sed 's~AZURE_AKS_CLUSTER_NAME_PLACEHOLDER~'"$AZURE_AKS_CLUSTER_NAME"'~' | \
   sed 's~AZURE_SUBSCRIPTION_PLACEHOLDER~'"$AZURE_SUBSCRIPTION"'~' | \
   sed 's~AZURE_LOCATION_PLACEHOLDER~'"$AZURE_LOCATION"'~' | \
   sed 's~DT_ENVIRONMENT_ID_PLACEHOLDER~'"$DT_ENVIRONMENT_ID"'~' | \

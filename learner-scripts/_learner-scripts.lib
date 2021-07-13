@@ -5,6 +5,7 @@ CREDS_FILE=../gen/workshop-credentials.json
 if [ -f "$CREDS_FILE" ]
 then
     AZURE_RESOURCE_GROUP=$(cat $CREDS_FILE | jq -r '.AZURE_RESOURCE_GROUP')
+    AZURE_AKS_CLUSTER_NAME=$(cat $CREDS_FILE | jq -r '.AZURE_AKS_CLUSTER_NAME')
     AZURE_SUBSCRIPTION=$(cat $CREDS_FILE | jq -r '.AZURE_SUBSCRIPTION')
     DT_BASEURL=$(cat $CREDS_FILE | jq -r '.DT_BASEURL')
     DT_API_TOKEN=$(cat $CREDS_FILE | jq -r '.DT_API_TOKEN')
@@ -12,6 +13,11 @@ else
   echo "ABORT: CREDS_FILE: $CREDS_FILE not found"
   exit 1
 fi
+
+getk8FrontEndPublicIP() {
+  echo "Retrieving $AZURE_AKS_CLUSTER_NAME frontend Public IP"
+  PUBLIC_IP_k8=$(kubectl -n staging get service frontend -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
+}
 
 getMonolithPublicIP() {
   HOSTNAME_MONOLITH="dt-orders-monolith"
@@ -35,6 +41,7 @@ showAppUrls() {
 
   getMonolithPublicIP
   getServicesPublicIP
+  getk8FrontEndPublicIP
   
   echo ""
   echo "-----------------------------------------------------------------------------------"
@@ -47,13 +54,17 @@ showAppUrls() {
   echo "SERVICES VERSION"
   echo "http://$PUBLIC_IP_SERVICES"
   echo ""
+  if ! [ -z $PUBLIC_IP_k8 ]; then
+    echo "K8 VERSION"
+    echo "https://$PUBLIC_IP_k8"
+    echo ""
+  fi
   echo ""
 }
 
 setServicesVersion() {
   SERVICE=$1
   NEW_VERSION=$2
-
   TAG_PROJECT=dt-orders
 
   if [ "$SERVICE" = "order" ]; then
@@ -65,8 +76,14 @@ setServicesVersion() {
   elif [ "$SERVICE" = "backend" ]; then
     TAG_SERVICE=backend
     TAG_STAGE=production
+  elif [ "$SERVICE" = "k8-order" ]; then
+    TAG_SERVICE=order
+    TAG_STAGE=staging
+  elif [ "$SERVICE" = "k8-customer" ]; then
+    TAG_SERVICE=customer
+    TAG_STAGE=staging
   else
-    echo "ERROR setServicesVersion(): missing or invalid SERVICE $SERVICE : must be value of order,customer or backend"
+    echo "ERROR setServicesVersion(): missing or invalid SERVICE $SERVICE : must be value of [order,customer,k8-order,k8-customer or backend"
     echo "Required arguments are: SERVICE NEW_VERSION"
     exit 1
   fi
@@ -75,17 +92,27 @@ setServicesVersion() {
     if [ "$TAG_STAGE" = "production" ]; then
       getMonolithPublicIP
       PUBLIC_IP=$PUBLIC_IP_MONOLITH
+      SET_VERSION_URL="http://$PUBLIC_IP/$SERVICE/setversion/$NEW_VERSION"
+    elif [ "$TAG_STAGE" = "staging" ]; then
+      getk8FrontEndPublicIP
+      if [ -z $PUBLIC_IP_k8 ]; then
+        echo "ERROR: Can't find k8 service. Not attempting to set version."
+        exit 1
+      fi
+      PUBLIC_IP=$PUBLIC_IP_k8
+      SET_VERSION_URL="http://$PUBLIC_IP/$TAG_SERVICE/setversion/$NEW_VERSION"
     else
       getServicesPublicIP
       PUBLIC_IP=$PUBLIC_IP_SERVICES
+      SET_VERSION_URL="http://$PUBLIC_IP/$SERVICE/setversion/$NEW_VERSION"
     fi
     echo "================================================================="
     echo "Setting Service Version"
-    echo "SERVICE     = $SERVICE"
-    echo "NEW_VERSION = $NEW_VERSION"
-    echo "PUBLIC URL  = http://$PUBLIC_IP"
+    echo "SERVICE         = $SERVICE"
+    echo "NEW_VERSION     = $NEW_VERSION"
+    echo "SET_VERSION_URL = $SET_VERSION_URL"
     echo "================================================================="
-    RETURN_MESSAGE=$(curl -s -X GET "http://$PUBLIC_IP/$SERVICE/setversion/$NEW_VERSION")
+    RETURN_MESSAGE=$(curl -X GET $SET_VERSION_URL)
     if [[ "$RETURN_MESSAGE" == *"Action was successful"* || "$RETURN_MESSAGE" == *"Set version to"* ]]; then
       echo "Set $SERVICE to $NEW_VERSION was successful"
     else

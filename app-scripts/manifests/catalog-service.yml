@@ -31,7 +31,7 @@ spec:
           name: catalog
         env:
         - name: DT_CUSTOM_PROP
-          value: "project=dt-orders service=catalog"
+          value: "project=dt-orders service=catalog-service"
 ---
 apiVersion: v1
 kind: Service
