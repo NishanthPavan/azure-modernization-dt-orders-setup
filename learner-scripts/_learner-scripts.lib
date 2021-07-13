@@ -77,10 +77,12 @@ setServicesVersion() {
     TAG_SERVICE=backend
     TAG_STAGE=production
   elif [ "$SERVICE" = "k8-order" ]; then
-    TAG_SERVICE=order
+    SERVICE=order
+    TAG_SERVICE=order-service
     TAG_STAGE=staging
   elif [ "$SERVICE" = "k8-customer" ]; then
-    TAG_SERVICE=customer
+    SERVICE=customer
+    TAG_SERVICE=customer-service
     TAG_STAGE=staging
   else
     echo "ERROR setServicesVersion(): missing or invalid SERVICE $SERVICE : must be value of [order,customer,k8-order,k8-customer or backend"
@@ -92,7 +94,6 @@ setServicesVersion() {
     if [ "$TAG_STAGE" = "production" ]; then
       getMonolithPublicIP
       PUBLIC_IP=$PUBLIC_IP_MONOLITH
-      SET_VERSION_URL="http://$PUBLIC_IP/$SERVICE/setversion/$NEW_VERSION"
     elif [ "$TAG_STAGE" = "staging" ]; then
       getk8FrontEndPublicIP
       if [ -z $PUBLIC_IP_k8 ]; then
@@ -100,19 +101,20 @@ setServicesVersion() {
         exit 1
       fi
       PUBLIC_IP=$PUBLIC_IP_k8
-      SET_VERSION_URL="http://$PUBLIC_IP/$TAG_SERVICE/setversion/$NEW_VERSION"
     else
       getServicesPublicIP
       PUBLIC_IP=$PUBLIC_IP_SERVICES
-      SET_VERSION_URL="http://$PUBLIC_IP/$SERVICE/setversion/$NEW_VERSION"
     fi
+    
+    SET_VERSION_URL="http://$PUBLIC_IP/$SERVICE/setversion/$NEW_VERSION"
+
     echo "================================================================="
     echo "Setting Service Version"
     echo "SERVICE         = $SERVICE"
     echo "NEW_VERSION     = $NEW_VERSION"
     echo "SET_VERSION_URL = $SET_VERSION_URL"
     echo "================================================================="
-    RETURN_MESSAGE=$(curl -X GET $SET_VERSION_URL)
+    RETURN_MESSAGE=$(curl -s -X GET $SET_VERSION_URL)
     if [[ "$RETURN_MESSAGE" == *"Action was successful"* || "$RETURN_MESSAGE" == *"Set version to"* ]]; then
       echo "Set $SERVICE to $NEW_VERSION was successful"
     else
