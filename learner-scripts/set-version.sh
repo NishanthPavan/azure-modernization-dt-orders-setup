@@ -4,4 +4,4 @@ SERVICE=$1
 NEW_VERSION=$2
 
 source ./_learner-scripts.lib
-setServicesVersion $SERVICE $NEW_VERSION
+./set-version.sh $SERVICE $NEW_VERSION
