@@ -56,7 +56,6 @@
     "manuallyAssignedApps": [],
     "requests": [
       {
-        "entityId": "HTTP_CHECK_STEP-767294E23634C417",
         "name": "azure.com",
         "sequenceNumber": 1
       }
