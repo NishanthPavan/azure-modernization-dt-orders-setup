@@ -40,7 +40,7 @@ getServicesPublicIP() {
 showAppUrls() {
 
   getMonolithPublicIP
-  getServicesPublicIP
+  #getServicesPublicIP
   getk8FrontEndPublicIP
   
   echo ""
@@ -51,9 +51,9 @@ showAppUrls() {
   echo "MONOLITH"
   echo "http://$PUBLIC_IP_MONOLITH"
   echo ""
-  echo "SERVICES"
-  echo "http://$PUBLIC_IP_SERVICES"
-  echo ""
+  #echo "SERVICES"
+  #echo "http://$PUBLIC_IP_SERVICES"
+  #echo ""
   if ! [ -z $PUBLIC_IP_k8 ]; then
     echo "K8"
     echo "https://$PUBLIC_IP_k8"
