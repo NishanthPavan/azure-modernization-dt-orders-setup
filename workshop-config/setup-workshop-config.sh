@@ -112,9 +112,6 @@ echo "Starting   : $(date)"
 echo "-----------------------------------------------------------------------------------"
 echo ""
 
-create_service_principal_monaco_config
-exit
-
 case "$SETUP_TYPE" in
     "k8") 
         echo "Setup type = k8"
