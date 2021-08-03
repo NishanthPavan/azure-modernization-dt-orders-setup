@@ -48,14 +48,14 @@ showAppUrls() {
   echo "Workshop Application URLs:"
   echo "-----------------------------------------------------------------------------------"
   echo ""
-  echo "MONOLITH VERSION"
+  echo "MONOLITH"
   echo "http://$PUBLIC_IP_MONOLITH"
   echo ""
-  echo "SERVICES VERSION"
+  echo "SERVICES"
   echo "http://$PUBLIC_IP_SERVICES"
   echo ""
   if ! [ -z $PUBLIC_IP_k8 ]; then
-    echo "K8 VERSION"
+    echo "K8"
     echo "https://$PUBLIC_IP_k8"
     echo ""
   fi
